@@ -7,7 +7,9 @@ import Wrapper from '../assets/wrappers/LandingPage';
 const LandingPage = () => {
   return (
     <Wrapper>
-      <Logo />
+      <nav className="container">
+        <Logo />
+      </nav>
       <div className="container page">
         <div className="info">
           <h1>
