@@ -1,8 +1,11 @@
+import React, { Fragment } from 'react';
+import LandingPage from './pages/LandingPage';
+
 function App() {
   return (
-    <div>
-      <h1>Hello world!</h1>
-    </div>
+    <Fragment>
+      <LandingPage />
+    </Fragment>
   );
 }
 
