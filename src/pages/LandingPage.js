@@ -16,7 +16,7 @@ const LandingPage = () => {
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Reprehenderit nam fugiat, expedita fuga beatae magnam, labore
             molestiae assumenda quod deleniti repellat excepturi! Atque rerum
-            eligendi iste expedita est fuga modi.
+            eligendi iste expedita.
           </p>
           <button className="btn btn-hero">Login/Register</button>
         </div>
