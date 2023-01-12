@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from '../assets/wrappers/RegisterPage';
 import Logo from '../components/Logo';
@@ -58,7 +58,9 @@ const RegisterPage = () => {
     <Wrapper className="full-page">
       {isLoading && <Spinner />}
       <form className="form" onSubmit={handleSubmit}>
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         <div className="form-control">
           <h3>{values.isMember ? 'Login' : 'Register'}</h3>
           {!values.isMember && (
