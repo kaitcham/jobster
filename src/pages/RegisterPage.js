@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from '../assets/wrappers/RegisterPage';
 import Logo from '../components/Logo';
 import FormRow from '../utils/FormRow';
-// redux toolkit and useNavigate later
+import Spinner from '../utils/Spinner';
+import { loginUser, registerUser } from '../features/user/userSlice';
 
 const initialState = {
   name: '',
@@ -13,7 +16,10 @@ const initialState = {
 };
 
 const RegisterPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [values, setValues] = useState(initialState);
+  const { isLoading, user } = useSelector((state) => state.user);
 
   const toggleForm = () => {
     setValues({ ...values, isMember: !values.isMember });
@@ -34,10 +40,23 @@ const RegisterPage = () => {
       toast.error('Please fill in all fields');
       return;
     }
+
+    if (isMember) {
+      dispatch(loginUser({ email, password }));
+    } else {
+      dispatch(registerUser({ name, email, password }));
+    }
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   return (
     <Wrapper className="full-page">
+      {isLoading && <Spinner />}
       <form className="form" onSubmit={handleSubmit}>
         <Logo />
         <div className="form-control">
@@ -62,8 +81,8 @@ const RegisterPage = () => {
             value={values.password}
             handleChange={handleChange}
           />
-          <button type="submit" className="btn btn-block">
-            submit
+          <button type="submit" className="btn btn-block" disabled={isLoading}>
+            {values.isMember ? 'Login' : 'Register'}
           </button>
           <p>
             {values.isMember ? 'Not a member?' : 'Already a member?'}
