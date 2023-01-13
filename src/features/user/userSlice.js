@@ -4,6 +4,7 @@ import customBaseUrl from '../../utils/axios';
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
+  removeUserFromLocalStorage,
 } from '../../utils/localStorage';
 
 const initialState = {
@@ -43,6 +44,11 @@ const userSlice = createSlice({
     toggleSidebar(state) {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
+    logoutUser(state) {
+      state.user = null;
+      removeUserFromLocalStorage();
+      toast.success('You have been logged out');
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(registerUser.pending, (state) => {
@@ -52,6 +58,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.user = action.payload;
       addUserToLocalStorage(action.payload);
+      toast.success(`Welcome ${action.payload.user.name}`);
     });
     builder.addCase(registerUser.rejected, (state, action) => {
       state.isLoading = false;
@@ -64,6 +71,7 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.user = action.payload;
       addUserToLocalStorage(action.payload);
+      toast.success(`Welcome back ${action.payload.user.name}`);
     });
     builder.addCase(loginUser.rejected, (state, action) => {
       state.isLoading = false;
@@ -71,5 +79,7 @@ const userSlice = createSlice({
     });
   },
 });
+
+export const { toggleSidebar, logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;
