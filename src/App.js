@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/RegisterPage';
 import ErrorPage from './pages/ErrorPage';
+import ProtectedRoute from './pages/ProtectedRoute';
 import {
   Stats,
   AddJob,
@@ -20,7 +21,14 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="register" element={<RegisterPage />} />
-        <Route path="dashboard" element={<SharedLayout />}>
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <SharedLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Stats />} />
           <Route path="add-job" element={<AddJob />} />
           <Route path="profile" element={<Profile />} />
