@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import FormRow from '../../utils/FormRow';
 import FormSelect from '../../utils/FormSelect';
+import { createJob } from '../../features/job/jobSlice';
 import { handleUserData, clearValues } from '../../features/job/jobSlice';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 
@@ -28,6 +29,16 @@ const AddJob = () => {
       toast.error('Please Fill Out All Fields');
       return;
     }
+
+    dispatch(
+      createJob({
+        position,
+        company,
+        jobLocation,
+        status,
+        jobType,
+      })
+    );
   };
   const handleJobInput = (e) => {
     const name = e.target.name;
@@ -89,7 +100,7 @@ const AddJob = () => {
               onClick={handleSubmit}
               disabled={isLoading}
             >
-              submit
+              {isLoading ? 'loading...' : 'submit'}
             </button>
           </div>
         </div>
