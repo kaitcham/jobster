@@ -22,9 +22,12 @@ const jobSlice = createSlice({
       const value = action.payload.value;
       state[name] = value;
     },
+    clearValues: (state) => {
+      return initialState;
+    },
   },
 });
 
-export const { handleUserData } = jobSlice.actions;
+export const { handleUserData, clearValues } = jobSlice.actions;
 
 export default jobSlice.reducer;
