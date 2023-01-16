@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import FormRow from '../../utils/FormRow';
 import FormSelect from '../../utils/FormSelect';
+import { handleUserData } from '../../features/job/jobSlice';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 
 const AddJob = () => {
@@ -31,6 +32,7 @@ const AddJob = () => {
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
+    dispatch(handleUserData({ name, value }));
   };
 
   return (
