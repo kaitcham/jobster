@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import customBaseUrl from '../../utils/axios';
+import { logoutUser } from '../user/userSlice';
+import { getUserFromLocalStorage } from '../../utils/localStorage';
 
 const initialState = {
   isLoading: false,
@@ -27,7 +29,13 @@ export const createJob = createAsyncThunk(
       thunkAPI.dispatch(clearValues());
       return response.data;
     } catch (error) {
-      thunkAPI.rejectWithValue(error.response.data.msg);
+      if (error.response.status === 401) {
+        thunkAPI.dispatch(logoutUser());
+        return thunkAPI.rejectWithValue(
+          'Your session has expired. Please login again'
+        );
+      }
+      return thunkAPI.rejectWithValue(error.response.data.msg);
     }
   }
 );
@@ -41,15 +49,18 @@ const jobSlice = createSlice({
       const value = action.payload.value;
       state[name] = value;
     },
-    clearValues: (state) => {
-      return initialState;
+    clearValues: () => {
+      return {
+        ...initialState,
+        jobLocation: getUserFromLocalStorage()?.user.location,
+      };
     },
   },
   extraReducers: (builder) => {
     builder.addCase(createJob.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(createJob.fulfilled, (state, action) => {
+    builder.addCase(createJob.fulfilled, (state) => {
       state.isLoading = false;
       toast.success('Job created successfully');
     });
