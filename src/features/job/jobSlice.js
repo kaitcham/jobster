@@ -5,9 +5,9 @@ const initialState = {
   position: '',
   company: '',
   jobLocation: '',
-  jobTypeOptions: ['remote', 'part-time', 'full-time', 'internship'],
+  jobTypeOptions: ['remote', 'full-time', 'part-time', 'internship'],
   jobType: 'remote',
-  statusOptions: ['interview', 'pending', 'declined'],
+  statusOptions: ['pending', 'declined', 'interview'],
   status: 'interview',
   isEditing: false,
   editJobId: '',
@@ -16,7 +16,15 @@ const initialState = {
 const jobSlice = createSlice({
   name: 'job',
   initialState,
-  reducers: {},
+  reducers: {
+    handleUserData: (state, action) => {
+      const name = action.payload.name;
+      const value = action.payload.value;
+      state[name] = value;
+    },
+  },
 });
+
+export const { handleUserData } = jobSlice.actions;
 
 export default jobSlice.reducer;
