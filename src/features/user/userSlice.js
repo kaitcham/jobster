@@ -48,6 +48,10 @@ export const updateUser = createAsyncThunk(
       });
       return resp.data;
     } catch (error) {
+      if (error.response.status === 401) {
+        thunkApi.dispatch(logoutUser());
+        toast.error('Your session has expired. Please login again');
+      }
       return thunkApi.rejectWithValue(error.response.data.msg);
     }
   }
@@ -60,10 +64,12 @@ const userSlice = createSlice({
     toggleSidebar(state) {
       state.isSidebarOpen = !state.isSidebarOpen;
     },
-    logoutUser(state) {
+    logoutUser(state, action) {
       state.user = null;
       removeUserFromLocalStorage();
-      toast.success('You have been logged out');
+      if (action.payload) {
+        toast.success(action.payload);
+      }
     },
   },
   extraReducers: (builder) => {
