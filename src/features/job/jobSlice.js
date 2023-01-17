@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import customBaseUrl from '../../utils/axios';
 import { logoutUser } from '../user/userSlice';
 import { getUserFromLocalStorage } from '../../utils/localStorage';
+import { getAllJobs } from '../allJobs/allJobsSlice';
 
 const initialState = {
   isLoading: false,
@@ -40,6 +41,28 @@ export const createJob = createAsyncThunk(
   }
 );
 
+export const deleteJob = createAsyncThunk(
+  'job/deleteJob',
+  async (jobId, thunkAPI) => {
+    try {
+      await customBaseUrl.delete(`/jobs/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${thunkAPI.getState().user.user.user.token}`,
+        },
+      });
+      thunkAPI.dispatch(getAllJobs());
+    } catch (error) {
+      if (error.response.status === 401) {
+        thunkAPI.dispatch(logoutUser());
+        return thunkAPI.rejectWithValue(
+          'Your session has expired. Please login again'
+        );
+      }
+      return thunkAPI.rejectWithValue(error.response.data.msg);
+    }
+  }
+);
+
 const jobSlice = createSlice({
   name: 'job',
   initialState,
@@ -65,6 +88,17 @@ const jobSlice = createSlice({
       toast.success('Job created successfully');
     });
     builder.addCase(createJob.rejected, (state, action) => {
+      state.isLoading = false;
+      toast.error(action.payload);
+    });
+    builder.addCase(deleteJob.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteJob.fulfilled, (state) => {
+      state.isLoading = false;
+      toast.success('Job deleted successfully');
+    });
+    builder.addCase(deleteJob.rejected, (state, action) => {
       state.isLoading = false;
       toast.error(action.payload);
     });
