@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { FaLocationArrow, FaBriefcase, FaCalendarAlt } from 'react-icons/fa';
 import Wrapper from '../assets/wrappers/Job';
-import { deleteJob } from '../features/job/jobSlice';
+import { setEditJob, deleteJob } from '../features/job/jobSlice';
 
 const Job = (job) => {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ const Job = (job) => {
               to="/dashboard/add-job"
               className="btn edit-btn"
               onClick={() => {
-                console.log(_id);
+                dispatch(setEditJob({ editJobId: _id, ...job }));
               }}
             >
               Edit
