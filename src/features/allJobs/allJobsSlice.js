@@ -12,11 +12,7 @@ export const getAllJobs = createAsyncThunk(
   async (_, thunkApi) => {
     const url = '/jobs';
     try {
-      const { data } = await customBaseUrl.get(url, {
-        headers: {
-          authorization: `Bearer ${thunkApi.getState().user.user.user.token}`,
-        },
-      });
+      const { data } = await customBaseUrl.get(url);
       return data;
     } catch (error) {
       thunkApi.rejectWithValue(error.response.data.msg);
