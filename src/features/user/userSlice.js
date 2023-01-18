@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import customBaseUrl from '../../utils/axios';
+import {
+  registerUserThunk,
+  loginUserThunk,
+  updateUserThunk,
+} from './userThunk';
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
@@ -15,47 +19,12 @@ const initialState = {
 
 export const registerUser = createAsyncThunk(
   'user/registerUser',
-  async (user, thunkApi) => {
-    try {
-      const resp = await customBaseUrl.post('/auth/register', user);
-      return resp.data;
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data.msg);
-    }
-  }
+  registerUserThunk
 );
 
-export const loginUser = createAsyncThunk(
-  'user/loginUser',
-  async (user, thunkApi) => {
-    try {
-      const resp = await customBaseUrl.post('/auth/login', user);
-      return resp.data;
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data.msg);
-    }
-  }
-);
+export const loginUser = createAsyncThunk('user/loginUser', loginUserThunk);
 
-export const updateUser = createAsyncThunk(
-  'user/updateUser',
-  async (user, thunkApi) => {
-    try {
-      const resp = await customBaseUrl.patch('/auth/updateUser', user, {
-        headers: {
-          Authorization: `Bearer ${thunkApi.getState().user.user.user.token}`,
-        },
-      });
-      return resp.data;
-    } catch (error) {
-      if (error.response.status === 401) {
-        thunkApi.dispatch(logoutUser());
-        toast.error('Your session has expired. Please login again');
-      }
-      return thunkApi.rejectWithValue(error.response.data.msg);
-    }
-  }
-);
+export const updateUser = createAsyncThunk('user/updateUser', updateUserThunk);
 
 const userSlice = createSlice({
   name: 'user',

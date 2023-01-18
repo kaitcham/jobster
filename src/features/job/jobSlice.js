@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import customBaseUrl from '../../utils/axios';
-import { logoutUser } from '../user/userSlice';
+import { createJobThunk, editJobThunk, deleteJobThunk } from './jobThunk';
 import { getUserFromLocalStorage } from '../../utils/localStorage';
-import { getAllJobs } from '../allJobs/allJobsSlice';
 
 const initialState = {
   isLoading: false,
@@ -18,66 +16,11 @@ const initialState = {
   editJobId: '',
 };
 
-export const createJob = createAsyncThunk(
-  'job/createJob',
-  async (job, thunkAPI) => {
-    try {
-      const response = await customBaseUrl.post('/jobs', job, {
-        headers: {
-          Authorization: `Bearer ${thunkAPI.getState().user.user.user.token}`,
-        },
-      });
-      thunkAPI.dispatch(clearValues());
-      return response.data;
-    } catch (error) {
-      if (error.response.status === 401) {
-        thunkAPI.dispatch(logoutUser());
-        return thunkAPI.rejectWithValue(
-          'Your session has expired. Please login again'
-        );
-      }
-      return thunkAPI.rejectWithValue(error.response.data.msg);
-    }
-  }
-);
+export const createJob = createAsyncThunk('job/createJob', createJobThunk);
 
-export const editJob = createAsyncThunk(
-  'job/editJob',
-  async ({ jobId, job }, thunkAPI) => {
-    try {
-      await customBaseUrl.patch(`/jobs/${jobId}`, job, {
-        headers: {
-          Authorization: `Bearer ${thunkAPI.getState().user.user.user.token}`,
-        },
-      });
-      thunkAPI.dispatch(clearValues());
-    } catch (error) {
-      thunkAPI.rejectWithValue(error.response.data.msg);
-    }
-  }
-);
+export const editJob = createAsyncThunk('job/editJob', editJobThunk);
 
-export const deleteJob = createAsyncThunk(
-  'job/deleteJob',
-  async (jobId, thunkAPI) => {
-    try {
-      await customBaseUrl.delete(`/jobs/${jobId}`, {
-        headers: {
-          Authorization: `Bearer ${thunkAPI.getState().user.user.user.token}`,
-        },
-      });
-      thunkAPI.dispatch(getAllJobs());
-    } catch (error) {
-      if (error.response.status === 401) {
-        thunkAPI.dispatch(logoutUser());
-        return thunkAPI.rejectWithValue(
-          'Your session has expired. Please login again'
-        );
-      }
-      return thunkAPI.rejectWithValue(error.response.data.msg);
-    }
-  }
-);
+export const deleteJob = createAsyncThunk('job/deleteJob', deleteJobThunk);
 
 const jobSlice = createSlice({
   name: 'job',
