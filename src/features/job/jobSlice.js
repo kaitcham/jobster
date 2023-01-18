@@ -41,6 +41,22 @@ export const createJob = createAsyncThunk(
   }
 );
 
+export const editJob = createAsyncThunk(
+  'job/editJob',
+  async ({ jobId, job }, thunkAPI) => {
+    try {
+      await customBaseUrl.patch(`/jobs/${jobId}`, job, {
+        headers: {
+          Authorization: `Bearer ${thunkAPI.getState().user.user.user.token}`,
+        },
+      });
+      thunkAPI.dispatch(clearValues());
+    } catch (error) {
+      thunkAPI.rejectWithValue(error.response.data.msg);
+    }
+  }
+);
+
 export const deleteJob = createAsyncThunk(
   'job/deleteJob',
   async (jobId, thunkAPI) => {
@@ -72,6 +88,13 @@ const jobSlice = createSlice({
       const value = action.payload.value;
       state[name] = value;
     },
+    setEditJob: (state, action) => {
+      return {
+        ...state,
+        isEditing: true,
+        ...action.payload,
+      };
+    },
     clearValues: () => {
       return {
         ...initialState,
@@ -91,6 +114,17 @@ const jobSlice = createSlice({
       state.isLoading = false;
       toast.error(action.payload);
     });
+    builder.addCase(editJob.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(editJob.fulfilled, (state) => {
+      state.isLoading = false;
+      toast.success('Job edited successfully');
+    });
+    builder.addCase(editJob.rejected, (state, action) => {
+      state.isLoading = false;
+      toast.error(action.payload);
+    });
     builder.addCase(deleteJob.pending, (state) => {
       state.isLoading = true;
     });
@@ -105,6 +139,6 @@ const jobSlice = createSlice({
   },
 });
 
-export const { handleUserData, clearValues } = jobSlice.actions;
+export const { handleUserData, setEditJob, clearValues } = jobSlice.actions;
 
 export default jobSlice.reducer;
