@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import FormRow from '../../utils/FormRow';
 import FormSelect from '../../utils/FormSelect';
-import { createJob } from '../../features/job/jobSlice';
+import { createJob, editJob } from '../../features/job/jobSlice';
 import { handleUserData, clearValues } from '../../features/job/jobSlice';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 import { getUserFromLocalStorage } from '../../utils/localStorage';
@@ -32,13 +32,23 @@ const AddJob = () => {
         })
       );
     }
-  }, []);
+  }, [isEditing, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!position || !company || !jobLocation) {
       toast.error('Please Fill Out All Fields');
+      return;
+    }
+
+    if (isEditing) {
+      dispatch(
+        editJob({
+          jobId: editJobId,
+          job: { position, company, jobLocation, status, jobType },
+        })
+      );
       return;
     }
 
