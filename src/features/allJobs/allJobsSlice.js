@@ -5,6 +5,8 @@ import customBaseUrl from '../../utils/axios';
 const initialState = {
   isLoading: true,
   jobs: [],
+  stats: {},
+  monthlyApplications: [],
 };
 
 export const getAllJobs = createAsyncThunk(
@@ -16,6 +18,18 @@ export const getAllJobs = createAsyncThunk(
       return data;
     } catch (error) {
       thunkApi.rejectWithValue(error.response.data.msg);
+    }
+  }
+);
+
+export const showStats = createAsyncThunk(
+  'allJobs/showStats',
+  async (_, thunkApi) => {
+    try {
+      const { data } = await customBaseUrl.get('/jobs/stats');
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data.msg);
     }
   }
 );
@@ -35,6 +49,19 @@ const allJobsSlice = createSlice({
         state.jobs = jobs;
       })
       .addCase(getAllJobs.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(showStats.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(showStats.fulfilled, (state, action) => {
+        const { defaultStats, monthlyApplications } = action.payload;
+        state.isLoading = false;
+        state.stats = defaultStats;
+        state.monthlyApplications = monthlyApplications;
+      })
+      .addCase(showStats.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload);
       });
