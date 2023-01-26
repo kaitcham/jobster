@@ -2,11 +2,20 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import customBaseUrl from '../../utils/axios';
 
+const initialFiltersState = {
+  search: '',
+  sort: 'a-z',
+  searchType: 'all',
+  searchStatus: 'all',
+  sortOptions: ['a-z', 'z-a', 'latest', 'oldest'],
+};
+
 const initialState = {
   isLoading: true,
   jobs: [],
   stats: {},
   monthlyApplications: [],
+  ...initialFiltersState,
 };
 
 export const getAllJobs = createAsyncThunk(
