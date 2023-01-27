@@ -3,15 +3,19 @@ import FormRow from '../utils/FormRow';
 import FormSelect from '../utils/FormSelect';
 import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from '../assets/wrappers/SearchContainer';
+import { handleChange, clearFilters } from '../features/allJobs/allJobsSlice';
 
 const SearchJobs = () => {
   const { isLoading, search, searchStatus, searchType, sort, sortOptions } =
     useSelector((state) => state.allJobs);
   const { jobTypeOptions, statusOptions } = useSelector((state) => state.job);
   const dispatch = useDispatch();
-  const handleSearch = (e) => {};
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSearch = (e) => {
+    const { name, value } = e.target;
+    dispatch(handleChange({ name, value }));
+  };
+  const clearForm = () => {
+    dispatch(clearFilters());
   };
   return (
     <Wrapper>
@@ -45,9 +49,10 @@ const SearchJobs = () => {
             arrayData={sortOptions}
           />
           <button
+            type="button"
             className="btn btn-block btn-danger"
             disabled={isLoading}
-            onClick={handleSubmit}
+            onClick={clearForm}
           >
             clear filters
           </button>
