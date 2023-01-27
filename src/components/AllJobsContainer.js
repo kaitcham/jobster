@@ -7,13 +7,21 @@ import { getAllJobs } from '../features/allJobs/allJobsSlice';
 
 const AllJobsContainer = () => {
   const dispatch = useDispatch();
-  const { isLoading, jobs, totalJobs, numOfPages } = useSelector(
-    (store) => store.allJobs
-  );
+  const {
+    isLoading,
+    jobs,
+    page,
+    sort,
+    search,
+    totalJobs,
+    searchType,
+    numOfPages,
+    searchStatus,
+  } = useSelector((store) => store.allJobs);
 
   useEffect(() => {
     dispatch(getAllJobs());
-  }, [dispatch]);
+  }, [page, sort, search, searchType, searchStatus, dispatch]);
 
   return (
     <Wrapper>
