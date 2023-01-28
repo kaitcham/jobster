@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import customBaseUrl from '../../utils/axios';
+import { logoutUser } from '../user/userSlice';
 
 const initialFiltersState = {
   search: '',
@@ -34,6 +35,12 @@ export const getAllJobs = createAsyncThunk(
       const { data } = await customBaseUrl.get(url);
       return data;
     } catch (error) {
+      if (error.response.status === 401) {
+        thunkApi.dispatch(logoutUser());
+        return thunkApi.rejectWithValue(
+          'Your session has expired. Please login again'
+        );
+      }
       thunkApi.rejectWithValue(error.response.data.msg);
     }
   }
@@ -46,6 +53,12 @@ export const showStats = createAsyncThunk(
       const { data } = await customBaseUrl.get('/jobs/stats');
       return data;
     } catch (error) {
+      if (error.response.status === 401) {
+        thunkApi.dispatch(logoutUser());
+        return thunkApi.rejectWithValue(
+          'Your session has expired. Please login again'
+        );
+      }
       return thunkApi.rejectWithValue(error.response.data.msg);
     }
   }
