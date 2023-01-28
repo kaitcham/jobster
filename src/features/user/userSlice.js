@@ -4,6 +4,7 @@ import {
   registerUserThunk,
   loginUserThunk,
   updateUserThunk,
+  clearStoreThunk,
 } from './userThunk';
 import {
   addUserToLocalStorage,
@@ -25,6 +26,8 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk('user/loginUser', loginUserThunk);
 
 export const updateUser = createAsyncThunk('user/updateUser', updateUserThunk);
+
+export const clearStore = createAsyncThunk('user/clearStore', clearStoreThunk);
 
 const userSlice = createSlice({
   name: 'user',
@@ -79,6 +82,9 @@ const userSlice = createSlice({
     });
     builder.addCase(updateUser.rejected, (state, action) => {
       state.isLoading = false;
+      toast.error(action.payload);
+    });
+    builder.addCase(clearStore.rejected, (action) => {
       toast.error(action.payload);
     });
   },
