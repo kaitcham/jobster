@@ -69,6 +69,7 @@ const allJobsSlice = createSlice({
   initialState,
   reducers: {
     handleChange: (state, action) => {
+      state.page = 1;
       const { name, value } = action.payload;
       state[name] = value;
     },
