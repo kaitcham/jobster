@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearStore } from '../features/user/userSlice';
 import { getUserFromLocalStorage } from './localStorage';
 
 const customBaseUrl = axios.create({
@@ -17,5 +18,15 @@ customBaseUrl.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export const checkForUnauthorizedResponse = (error, thunkAPI) => {
+  if (error.response.status === 401) {
+    thunkAPI.dispatch(clearStore());
+    return thunkAPI.rejectWithValue(
+      'Your session has expired. Please login again'
+    );
+  }
+  return thunkAPI.rejectWithValue(error.response.data.msg);
+};
 
 export default customBaseUrl;

@@ -1,7 +1,7 @@
 import { clearValues } from './jobSlice';
 import customBaseUrl from '../../utils/axios';
-import { logoutUser } from '../user/userSlice';
 import { getAllJobs } from '../allJobs/allJobsSlice';
+import { checkForUnauthorizedResponse } from '../../utils/axios';
 
 export const createJobThunk = async (job, thunkAPI) => {
   try {
@@ -9,13 +9,7 @@ export const createJobThunk = async (job, thunkAPI) => {
     thunkAPI.dispatch(clearValues());
     return response.data;
   } catch (error) {
-    if (error.response.status === 401) {
-      thunkAPI.dispatch(logoutUser());
-      return thunkAPI.rejectWithValue(
-        'Your session has expired. Please login again'
-      );
-    }
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
   }
 };
 
@@ -24,13 +18,7 @@ export const editJobThunk = async ({ jobId, job }, thunkAPI) => {
     await customBaseUrl.patch(`/jobs/${jobId}`, job);
     thunkAPI.dispatch(clearValues());
   } catch (error) {
-    if (error.response.status === 401) {
-      thunkAPI.dispatch(logoutUser());
-      return thunkAPI.rejectWithValue(
-        'Your session has expired. Please login again'
-      );
-    }
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
   }
 };
 
@@ -39,12 +27,6 @@ export const deleteJobThunk = async (jobId, thunkAPI) => {
     await customBaseUrl.delete(`/jobs/${jobId}`);
     thunkAPI.dispatch(getAllJobs());
   } catch (error) {
-    if (error.response.status === 401) {
-      thunkAPI.dispatch(logoutUser());
-      return thunkAPI.rejectWithValue(
-        'Your session has expired. Please login again'
-      );
-    }
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
   }
 };
