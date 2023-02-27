@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useMemo } from 'react';
 import FormRow from '../utils/FormRow';
 import FormSelect from '../utils/FormSelect';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,17 +6,32 @@ import Wrapper from '../assets/wrappers/SearchContainer';
 import { handleChange, clearFilters } from '../features/allJobs/allJobsSlice';
 
 const SearchJobs = () => {
-  const { isLoading, search, searchStatus, searchType, sort, sortOptions } =
+  const dispatch = useDispatch();
+  const [searchValue, setSearchValue] = useState('');
+  const { isLoading, searchStatus, searchType, sort, sortOptions } =
     useSelector((state) => state.allJobs);
   const { jobTypeOptions, statusOptions } = useSelector((state) => state.job);
-  const dispatch = useDispatch();
+
   const handleSearch = (e) => {
     const { name, value } = e.target;
     dispatch(handleChange({ name, value }));
   };
+
   const clearForm = () => {
     dispatch(clearFilters());
   };
+
+  const debounceSearch = useMemo(() => {
+    let timer;
+    return (e) => {
+      setSearchValue(e.target.value);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        dispatch(handleChange({ name: 'search', value: e.target.value }));
+      }, 1000);
+    };
+  }, [dispatch]);
+
   return (
     <Wrapper>
       <form className="form">
@@ -25,8 +40,8 @@ const SearchJobs = () => {
           <FormRow
             type="text"
             name="search"
-            value={search}
-            handleChange={handleSearch}
+            value={searchValue}
+            handleChange={debounceSearch}
           />
           <FormSelect
             labelText="status"
