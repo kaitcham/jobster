@@ -4,7 +4,7 @@
 
 ## Description
 
-Jobster is a fullstack application that allows it's users to manage their jobs applications.
+Jobster is a fullstack application that allows it's users to manage their job applications.
 
 ## Live Demo
 
